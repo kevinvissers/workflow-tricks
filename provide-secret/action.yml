@@ -1,0 +1,59 @@
+name: 'Make secrets available as environment variables'
+description: 'Make all fetched secrets available as environment variables'
+inputs:
+  provide-secrets:
+    description: 'Make secrets available (true/false)'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download secret files
+      uses: actions/download-artifact@v7
+      with:
+        path: ${{ runner.temp }}/secrets/
+        
+    - uses: actions/github-script@v8
+      env:
+        TEMP_DIR: ${{runner.temp }}
+        PROVIDE_SECRETS: ${{ inputs.secret-count }}
+      with:
+        script: |
+          const fs = require('fs');
+          const path = require("path");
+
+          const provideSecrets = process.env.PROVIDE_SECRETS;
+          const tempDir = process.env.TEMP_DIR;
+          
+          console.log(provideSecrets);
+          if(provideSecrets != "true") {
+            console.log("No secrets to provide.")
+            return "";
+          }
+
+          const filePath = `${tempDir}/secrets`;
+          const secretLocations = fs.readdirSync(filePath, { recursive: true });
+          
+          console.log(secretLocations);
+          
+          secretLocations.forEach(location => {
+              const actualLocation = filePath + "/" + location;
+              if (fs.statSync(actualLocation).isFile()) {
+                  const fileContent = fs.readFileSync(actualLocation, "utf8");
+                  console.log(fileContent);
+          
+                  const fileName = path.basename(actualLocation, ".scrt")
+                  console.log(fileName);
+                  const envVarName = fileName.split("-").reverse()[0];
+                  console.log(envVarName);
+
+                  // + decrypt content before setting as env var
+                  core.setSecret(fileContent);
+                  core.exportVariable(envVarName, fileContent);
+          
+              }
+          });
+
+          // remove all evidence
+          await io.rmRF(filePath);
+          // TODO: remove artifacts
