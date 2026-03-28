@@ -1,0 +1,26 @@
+name: 'Pass through'
+description: 'pass-through'
+inputs:
+  additionals:
+    description: 'Additional code to make available'
+    required: true
+    
+outputs:
+  additionals:
+    description: "Input for matrix job containing overview of required secrets"
+    value: ${{ steps.generate-matrix-input.outputs.additionals }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Generate input for matrix job
+      uses: actions/github-script@v8
+      id: generate-matrix-input
+      env:
+        ADDITIONALS: ${{ inputs.additionals }}
+      with:
+        script: |
+          const additionals = process.env.ADDITIONALS;
+
+          // base64 encode to trick GitHub
+          core.setOutput("additionals", btoa(additionals));
