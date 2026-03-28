@@ -4,15 +4,18 @@ on:
 jobs:
   some-job:
     outputs:
-      secrets: ${{ steps.set-secret.outputs.secret }}
+      secrets: ${{ steps.generate-matrix-input.outputs.additionals }}
     runs-on: ubuntu-latest
     environment: PRO
-    env:
-      MYSECRET: ${{ secrets.MYSECRET }}
     steps:
-      - id: set-secret
-        run: |
-          echo "secret=$MYSECRET" >> "$GITHUB_OUTPUT"
+      - name: Checkout (required for gh)
+        uses: actions/checkout@v6
+
+      - name: Generate overview of secrets
+        id: generate-matrix-input
+        uses: ./pass-through
+        with:
+          additionals: ${{ secrets.MYSECRET }}
           
   call-workflow-passing-data:
     needs: some-job
