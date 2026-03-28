@@ -1,0 +1,15 @@
+on:
+  workflow_call:
+    inputs:
+      secrets:
+        description: "list of secrets"
+        type: string
+        required: true
+
+jobs:
+  some-job:
+    environment: PRO
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ inputs.secrets }}
+      
