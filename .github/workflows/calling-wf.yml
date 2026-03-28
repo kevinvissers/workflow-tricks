@@ -22,4 +22,4 @@ jobs:
     needs: some-job
     uses: kevinvissers/workflow-tricks/.github/workflows/reusable-wf.yml@master
     with:
-      secrets: ${{ needs.some-job.outputs.secrets }}
+      additionals: ${{ needs.some-job.outputs.secrets }}
