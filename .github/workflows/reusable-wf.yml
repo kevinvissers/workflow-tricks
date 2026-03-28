@@ -1,8 +1,9 @@
+name: Central workflow which uses the secret
 on:
   workflow_call:
     inputs:
-      secrets:
-        description: "list of secrets"
+      additionals:
+        description: "list of additionals"
         type: string
         required: true
 
@@ -11,5 +12,4 @@ jobs:
     environment: PRO
     runs-on: ubuntu-latest
     steps:
-      - run: echo ${{ inputs.secrets }}
-      
+      - run: echo "${{ inputs.additionals }}" | base64 --decode
