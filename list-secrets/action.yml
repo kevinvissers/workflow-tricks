@@ -28,7 +28,7 @@ runs:
         FILE_NAME: secrets.json
       run: |
         # we only need the name of the secrets
-        gh secret list --env $ENVIRONMENT --json name >> $FILENAME
+        gh secret list --env $ENVIRONMENT --json name >> "$FILE_NAME"
 
     - name: Generate input for matrix job
       uses: actions/github-script@v8
