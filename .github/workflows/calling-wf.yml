@@ -1,3 +1,4 @@
+name: Calling workflow to provide a secret
 on: 
   workflow_dispatch:
 
