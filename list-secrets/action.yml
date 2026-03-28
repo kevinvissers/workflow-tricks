@@ -1,0 +1,53 @@
+name: 'Generate secret overview for environment'
+description: 'This action will generate an overview of all secrets on the specified environment. The output can be used as input for a matrix-job'
+inputs:
+  environment:
+    description: 'Which environment to use to fetch secrets'
+    required: true
+  gh-token:
+    description: 'Token with read-access to environment secrets'
+    required: true
+    
+outputs:
+  matrix:
+    description: "Input for matrix job containing overview of required secrets"
+    value: ${{ steps.generate-matrix-input.outputs.matrix }}
+
+  count:
+    description: "Number of secrets to fetch"
+    value: ${{ steps.generate-matrix-input.outputs.count }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Store overview of secrets in file
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.gh-token }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        FILE_NAME: secrets.json
+      run: |
+        # we only need the name of the secrets
+        gh secret list --env $ENVIRONMENT --json name >> $FILENAME
+
+    - name: Generate input for matrix job
+      uses: actions/github-script@v8
+      id: generate-matrix-input
+      with:
+        script: |
+          const fs = require('fs');
+          
+          let matrix = '{"include":[';
+
+          const data = fs.readFileSync('secrets.json', 'utf8');
+          json = JSON.parse(data);
+          
+          json.forEach(function(obj) {
+              console.log(obj.name);
+              matrix += `{"secret":"${obj.name}"},`
+          });
+          
+          matrix += "]}";
+
+          core.setOutput("matrix", matrix);
+          core.setOutput('count', json.length);
