@@ -1,0 +1,21 @@
+on: 
+  workflow_dispatch:
+
+jobs:
+  some-job:
+    outputs:
+      secrets: ${{ steps.set-secret.outputs.secret }}
+    runs-on: ubuntu-latest
+    environment: PRO
+    env:
+      MYSECRET: ${{ secrets.MYSECRET }}
+    steps:
+      - id: set-secret
+        run: |
+          echo "secret=$MYSECRET" >> "$GITHUB_OUTPUT"
+          
+  call-workflow-passing-data:
+    needs: some-job
+    uses: kevinvissers/workflow-tricks/.github/workflows/reusable-wf.yml@main
+    with:
+      secrets: ${{ needs.some-job.outputs.secrets }}
