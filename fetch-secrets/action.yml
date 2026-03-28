@@ -1,0 +1,38 @@
+name: 'Make secret available as artifact'
+description: 'Make secret available as an artifact'
+inputs:
+  secret-name:
+    description: 'Name of the secret'
+    required: true
+  secret-value:
+    description: 'Value of the secret'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/github-script@v8
+      env:
+        SECRET_NAME: ${{ inputs.secret-name }}
+        SECRET_VALUE: ${{ inputs.secret-value }}
+        TMP_DIR: ${{ runner.temp }}
+      with:
+        script: |
+          const fs = require('fs');
+          
+          const secretName = process.env.SECRET_NAME;
+          const secretValue = process.env.SECRET_VALUE;
+          const tmpDir = process.env.TMP_DIR;
+
+          core.setSecret(secretValue);
+          
+          const fileName = `${tmpDir}/environment-secrets-${secretName}.scrt`;
+          fs.writeFileSync(fileName, secretValue);
+    
+    - name: Upload secret artifact
+      uses: actions/upload-artifact@v7
+      with:
+        retention-days: 1
+        name: environment-secrets-${{ env.SECRET_NAME }}
+        path: ${{ runner.temp }}/environment-secrets-${{ env.SECRET_NAME }}.scrt
+        overwrite: true
