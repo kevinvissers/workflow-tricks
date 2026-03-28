@@ -33,6 +33,6 @@ runs:
       uses: actions/upload-artifact@v7
       with:
         retention-days: 1
-        name: environment-secrets-${{ env.SECRET_NAME }}
-        path: ${{ runner.temp }}/environment-secrets-${{ env.SECRET_NAME }}.scrt
+        name: environment-secrets-${{ inputs.secret-name }}
+        path: ${{ runner.temp }}/environment-secrets-${{ inputs.secret-name }}.scrt
         overwrite: true
