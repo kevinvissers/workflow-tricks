@@ -16,7 +16,7 @@ runs:
     - uses: actions/github-script@v8
       env:
         TEMP_DIR: ${{runner.temp }}
-        PROVIDE_SECRETS: ${{ inputs.secret-count }}
+        PROVIDE_SECRETS: ${{ inputs.provide-secrets }}
       with:
         script: |
           const fs = require('fs');
