@@ -16,6 +16,6 @@ jobs:
           
   call-workflow-passing-data:
     needs: some-job
-    uses: kevinvissers/workflow-tricks/.github/workflows/reusable-wf.yml@main
+    uses: kevinvissers/workflow-tricks/.github/workflows/reusable-wf.yml@master
     with:
       secrets: ${{ needs.some-job.outputs.secrets }}
