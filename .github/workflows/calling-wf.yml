@@ -5,7 +5,7 @@ on:
 jobs:
   some-job:
     outputs:
-      secrets: ${{ steps.generate-matrix-input.outputs.additionals }}
+      additionals: ${{ steps.generate-matrix-input.outputs.additionals }}
     runs-on: ubuntu-latest
     environment: PRO
     steps:
@@ -22,4 +22,4 @@ jobs:
     needs: some-job
     uses: kevinvissers/workflow-tricks/.github/workflows/reusable-wf.yml@master
     with:
-      additionals: ${{ needs.some-job.outputs.secrets }}
+      additionals: ${{ needs.some-job.outputs.additionals }}
