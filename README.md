@@ -3,6 +3,31 @@ Set of GitHub workflow tip and tricks
 
 
 # Secrets
+
+## SOLUTION
+```yaml
+name: Super solution
+on: workflow_dispatch
+
+jobs:
+  get-available-secrets:
+    runs-on: ubuntu-latest
+    name: List available secrets for PRO
+    environment: PRO
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Make all secrets available as env vars
+        run: |
+          echo '${{ toJson(secrets) }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+      
+      - name: Your build step
+        run: |
+          # All secrets are now automatically available as environment variables
+          echo "MYSECRET: $MYSECRET"
+          echo "ANOTHER_SECRET: $ANOTHER_SECRET"
+```
+
 ## Options
 ### 1. All in reusable worklow
 - Fetch list of available secrets
