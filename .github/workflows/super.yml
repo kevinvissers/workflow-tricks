@@ -1,5 +1,5 @@
 name: Super solution
-on: workflow_call
+on: workflow_dispatch
 
 jobs:
   get-available-secrets:
