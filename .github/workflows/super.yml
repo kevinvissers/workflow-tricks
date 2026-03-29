@@ -1,0 +1,20 @@
+name: Super solution
+on: workflow_call
+
+jobs:
+  get-available-secrets:
+    runs-on: ubuntu-latest
+    name: List available secrets for PRO
+    environment: PRO
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Make all secrets available as env vars
+        run: |
+          echo '${{ toJson(secrets) }}' | jq -r 'to_entries[] | "\(.key)=\(.value)"' >> $GITHUB_ENV
+      
+      - name: Your build step
+        run: |
+          # All secrets are now automatically available as environment variables
+          echo "MY_SECRET: $MY_SECRET"
+          echo "ANY_OTHER_SECRET: $ANY_OTHER_SECRET"
