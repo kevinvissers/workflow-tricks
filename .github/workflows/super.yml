@@ -16,5 +16,5 @@ jobs:
       - name: Your build step
         run: |
           # All secrets are now automatically available as environment variables
-          echo "MY_SECRET: $MY_SECRET"
-          echo "ANY_OTHER_SECRET: $ANY_OTHER_SECRET"
+          echo "MYSECRET: $MYSECRET"
+          echo "ANOTHER_SECRET: $ANOTHER_SECRET"
